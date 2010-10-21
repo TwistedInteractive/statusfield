@@ -200,19 +200,29 @@ Class fieldStatus extends Field
 			} else {
 				$dateUntil = 'NULL';
 			}
-			Symphony::Database()->query('INSERT INTO `tbl_fields_status_statusses`
-				(`field_id`, `entry_id`, `date`, `status`, `valid_until`) VALUES
-				('.$fieldId.', '.$entryId.', \''.$dateNow.'\', \''.$statusStr.'\', '.$dateUntil.');');
-			
+			// Don't insert if there is no entry_id:
+			if($entry_id != null)
+			{
+				Symphony::Database()->query('INSERT INTO `tbl_fields_status_statusses`
+					(`field_id`, `entry_id`, `date`, `status`, `valid_until`) VALUES
+					('.$fieldId.', '.$entryId.', \''.$dateNow.'\', \''.$statusStr.'\', '.$dateUntil.');');
+			}
 			// Return the new status:
 			return array(
 				'value' => $statusStr,
 			);
 		} else {
 			// Return the current status:
-			return array(
-				'value' => Symphony::Database()->fetchVar('status', 0, 'SELECT `status` FROM `tbl_fields_status_statusses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date`, `id`;')
-			);
+			if($entry_id != null)
+			{
+				// There can only be a value returned if there is an entry_id:
+				return array(
+					'value' => Symphony::Database()->fetchVar('status', 0, 'SELECT `status` FROM `tbl_fields_status_statusses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date`, `id`;')
+				);
+			} else {
+				// Is this the right way to do this?
+				return false;
+			}
 		}
 	}
 	
