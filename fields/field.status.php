@@ -273,6 +273,23 @@ Class fieldStatus extends Field
 	}
 	
 	
+	function displayDatasourceFilterPanel(&$wrapper, $data=NULL, $errors=NULL, $fieldnamePrefix=NULL, $fieldnamePostfix=NULL){
+		parent::displayDatasourceFilterPanel($wrapper, $data, $errors, $fieldnamePrefix, $fieldnamePostfix);
+		
+		$data = preg_split('/,\s*/i', $data);
+		$data = array_map('trim', $data);
+		
+		$existing_options = $this->getToggleStates();
+		
+		if(is_array($existing_options) && !empty($existing_options)){
+			$optionlist = new XMLElement('ul');
+			$optionlist->setAttribute('class', 'tags');
+			foreach($existing_options as $option) $optionlist->appendChild(new XMLElement('li', $option));
+			$wrapper->appendChild($optionlist);
+		}
+	}
+	
+	
 	// Toggle the field
 	function toggleFieldData($data, $newState)
 	{
