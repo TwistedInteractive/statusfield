@@ -182,7 +182,7 @@ Class fieldStatus extends Field
 		$status  = self::__OK__;
 		$fieldId = $this->get('id');
 		$entryId = $entry_id;
-			
+		
 		if($data != '0')
 		{
 			// Store new status:
@@ -193,7 +193,10 @@ Class fieldStatus extends Field
 			} else {
 				$dateUntil = '';	
 			}
-			$statusStr = $_POST['fields'][$this->get('element_name')];			
+			
+			// $statusStr = $_POST['fields'][$this->get('element_name')];
+			$statusStr = $data;
+			
 			if($dateUntil != __('DD-MM-YYYY') && !empty($dateUntil))
 			{
 				$dateUntil = '\''.$this->invertDate($dateUntil).'\'';
@@ -217,7 +220,7 @@ Class fieldStatus extends Field
 			{
 				// There can only be a value returned if there is an entry_id:
 				return array(
-					'value' => Symphony::Database()->fetchVar('status', 0, 'SELECT `status` FROM `tbl_fields_status_statusses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date`, `id`;')
+					'value' => Symphony::Database()->fetchVar('status', 0, 'SELECT `status` FROM `tbl_fields_status_statusses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date` DESC, `id` DESC;')
 				);
 			} else {
 				// Is this the right way to do this?
