@@ -11,7 +11,7 @@ Class fieldStatus extends Field
 	}
 	
 	function canToggle(){
-		return false;
+		return true;
 	}
 	
 	function allowDatasourceOutputGrouping(){
@@ -289,17 +289,11 @@ Class fieldStatus extends Field
 	
 	
 	// Toggle the field
-	function toggleFieldData($data, $newState)
+	function toggleFieldData($data, $newState, $entry_id=NULL)
 	{
-		// $data['value'] = $newState;
-		// $data['handle'] = Lang::createHandle($newState);
-		// return $data;
-		
-		// Get the entry-id:
-		// print_r(Symphony::Database()->fetch());
-		
-		
-		die();
+		$status = ''; // dummy variable
+		$data = $this->processRawFieldData($newState, $status, FALSE, $entry_id);
+		return $data;
 	}
 		
 }
