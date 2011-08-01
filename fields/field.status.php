@@ -84,7 +84,7 @@ Class fieldStatus extends Field
 	
 	
 	// Show the publish panel:
-	function displayPublishPanel(&$wrapper, $data=NULL, $flagWithError=NULL, $fieldnamePrefix=NULL, $fieldnamePostfix=NULL){
+	function displayPublishPanel(&$wrapper, $data=NULL, $flagWithError=NULL, $fieldnamePrefix=NULL, $fieldnamePostfix=NULL, $entry_id=NULL){
 		// Get the toggle states:
 		$states = $this->getToggleStates();
 		natsort($states);
@@ -114,12 +114,7 @@ Class fieldStatus extends Field
 		// Show the different states:
 		$fieldId = $this->get('id');
 		
-		// Get the Entry ID (code 'borrowed' from Nils Hörrmann's Subsection Manager):
-		$currentPageURL = Administration::instance()->getCurrentPageURL();
-		preg_match_all('/\d+/', $currentPageURL, $entry_id, PREG_PATTERN_ORDER);
-		$entry_id = $entry_id[0][count($entry_id[0])-1];
-		
-		if($entry_id != false)
+		if($entry_id != NULL)
 		{
 			$results = Symphony::Database()->fetch('SELECT `date`, `status`, `valid_until` FROM `tbl_fields_status_statuses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entry_id.' ORDER BY `date`, `id`;');
 			foreach($results as $result)
