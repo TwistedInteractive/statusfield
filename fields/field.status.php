@@ -125,7 +125,7 @@ Class fieldStatus extends Field
 			foreach($results as $result)
 			{
 				$row = new XMLElement('tr');
-				$row->appendChild(new XMLElement('td', $this->invertDate($result['date'])));
+				$row->appendChild(new XMLElement('td', DateTimeObj::get('d F Y', $result['date'])));
 				$row->appendChild(new XMLElement('td', $result['status']));
 				if($this->get('valid_until') == 'yes')
 				{
@@ -133,7 +133,7 @@ Class fieldStatus extends Field
 					{
 						$valid_until = '-';
 					} else {
-						$valid_until = $this->invertDate($result['valid_until']);
+						$valid_until = $result['valid_until'];
 					}
 					$row->appendChild(new XMLElement('td', $valid_until));
 				}
@@ -143,7 +143,7 @@ Class fieldStatus extends Field
 		
 		// Show the footer (option to set new status):
 		$row = new XMLElement('tr', null, array('class'=>'footer'));
-		$row->appendChild(new XMLElement('td', __('Update:')));
+		$row->appendChild(new XMLElement('td', DateTimeObj::get('d F Y'), array('class' => 'inactive')));
 		$td = new XMLElement('td', null);
 		if($this->get('valid_until') == 'yes')
 		{
@@ -160,7 +160,7 @@ Class fieldStatus extends Field
 			$row->appendChild(new XMLElement('td', __('Valid until:')));
 			$td = new XMLElement('td', null, array('colspan'=>2));
 			$fieldname = 'fields['.$this->get('element_name').'-until]';
-			$td->appendChild(Widget::Input($fieldname, __('DD-MM-YYYY')));
+			$td->appendChild(Widget::Input($fieldname, __('YYYY-MM-DD')));
 			$row->appendChild($td);
 			$table->appendChild($row);
 		}
@@ -197,9 +197,9 @@ Class fieldStatus extends Field
 			// $statusStr = $_POST['fields'][$this->get('element_name')];
 			$statusStr = $data;
 			
-			if($dateUntil != __('DD-MM-YYYY') && !empty($dateUntil))
+			if($dateUntil != __('YYYY-MM-DD') && !empty($dateUntil))
 			{
-				$dateUntil = '\''.$this->invertDate($dateUntil).'\'';
+				$dateUntil = '\''.$dateUntil.'\'';
 			} else {
 				$dateUntil = 'NULL';
 			}
@@ -307,16 +307,4 @@ Class fieldStatus extends Field
 		die();
 	}
 		
-		
-	/**
-	 * Invert a date for database storage (convert 2010-10-21 to 21-10-2010 and vice versa)
-	 * @param $str	string	The date
-	 * @return		string	The inverted date
-	 */
-	private function invertDate($str)
-	{
-		$a = explode('-', $str);
-		return $a[2].'-'.$a[1].'-'.$a[0];
-	}
-	
 }

@@ -30,8 +30,12 @@ Class extension_statusfield extends Extension
 	
 	public function initialiseHead($context)
 	{
-		Administration::instance()->Page->addScriptToHead(URL . '/extensions/statusfield/assets/statusfield.js', 101, false);
-		Administration::instance()->Page->addStylesheetToHead(URL . '/extensions/statusfield/assets/statusfield.css', 'screen', 101, false);
+		$page = $context['parent']->Page;
+		if ($page instanceof ContentPublish && in_array($page->_context['page'], array('new', 'edit')))
+		{
+			Administration::instance()->Page->addScriptToHead(URL . '/extensions/statusfield/assets/statusfield.publish.js', 101, false);
+			Administration::instance()->Page->addStylesheetToHead(URL . '/extensions/statusfield/assets/statusfield.publish.css', 'screen', 101, false);
+		}
 	}
 	
 	public function uninstall()
