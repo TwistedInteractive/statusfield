@@ -46,7 +46,7 @@ Class fieldStatus extends Field
 		$options = array();
 		$fieldname = 'fields'.$fieldnamePrefix.'['.$this->get('element_name').']'.$fieldnamePostfix;
 		
-		$label = Widget::Label(__('Statusses'));
+		$label = Widget::Label(__('Statuses'));
 		$input = Widget::Input('fields['.$this->get('sortorder').'][options]', General::sanitize($this->get('options')));
 		$label->appendChild($input);
 		$wrapper->appendChild($label);
@@ -121,7 +121,7 @@ Class fieldStatus extends Field
 		
 		if($entry_id != false)
 		{
-			$results = Symphony::Database()->fetch('SELECT `date`, `status`, `valid_until` FROM `tbl_fields_status_statusses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entry_id.' ORDER BY `date`, `id`;');
+			$results = Symphony::Database()->fetch('SELECT `date`, `status`, `valid_until` FROM `tbl_fields_status_statuses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entry_id.' ORDER BY `date`, `id`;');
 			foreach($results as $result)
 			{
 				$row = new XMLElement('tr');
@@ -206,7 +206,7 @@ Class fieldStatus extends Field
 			// Don't insert if there is no entry_id:
 			if($entry_id != null)
 			{
-				Symphony::Database()->query('INSERT INTO `tbl_fields_status_statusses`
+				Symphony::Database()->query('INSERT INTO `tbl_fields_status_statuses`
 					(`field_id`, `entry_id`, `date`, `status`, `valid_until`) VALUES
 					('.$fieldId.', '.$entryId.', \''.$dateNow.'\', \''.$statusStr.'\', '.$dateUntil.');');
 			}
@@ -220,7 +220,7 @@ Class fieldStatus extends Field
 			{
 				// There can only be a value returned if there is an entry_id:
 				return array(
-					'value' => Symphony::Database()->fetchVar('status', 0, 'SELECT `status` FROM `tbl_fields_status_statusses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date` DESC, `id` DESC;')
+					'value' => Symphony::Database()->fetchVar('status', 0, 'SELECT `status` FROM `tbl_fields_status_statuses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date` DESC, `id` DESC;')
 				);
 			} else {
 				// Is this the right way to do this?
@@ -238,7 +238,7 @@ Class fieldStatus extends Field
 		$attributes = $wrapper->getAttributes();
 		$entryId = $attributes['id'];
 		$fieldId = $this->get('id');
-		$results = Symphony::Database()->fetch('SELECT `date`, `status`, `valid_until` FROM `tbl_fields_status_statusses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date`, `id`;');
+		$results = Symphony::Database()->fetch('SELECT `date`, `status`, `valid_until` FROM `tbl_fields_status_statuses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date`, `id`;');
 		foreach($results as $result)
 		{
 			$status = new XMLElement('status', General::sanitize($result['status']), array('date'=>$result['date']));
@@ -251,11 +251,11 @@ Class fieldStatus extends Field
 	}
 	
 	
-	// Delete the entry and the associated statusses:
+	// Delete the entry and the associated statuses:
 	public function entryDataCleanup($entry_id, $data=NULL)
 	{
 		$this->Database->delete('tbl_entries_data_' . $this->get('id'), " `entry_id` = '$entry_id' ");
-		$this->Database->delete('tbl_fields_status_statusses', ' `entry_id` = '.$entry_id);
+		$this->Database->delete('tbl_fields_status_statuses', ' `entry_id` = '.$entry_id);
 		return true;
 	}
 	
