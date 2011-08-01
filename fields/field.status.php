@@ -106,7 +106,7 @@ Class fieldStatus extends Field
 		$row->appendChild(new XMLElement('th', __('Status')));
 		if($this->get('valid_until') == 'yes')
 		{
-			$row->appendChild(new XMLElement('th', __('Valid until'), array('class'=>'date')));
+			$row->appendChild(new XMLElement('th', __('Valid Until'), array('class'=>'date')));
 		}
 		
 		$table->appendChild($row);
@@ -133,7 +133,7 @@ Class fieldStatus extends Field
 					{
 						$valid_until = '-';
 					} else {
-						$valid_until = $result['valid_until'];
+						$valid_until = DateTimeObj::get('d F Y', $result['valid_until']);
 					}
 					$row->appendChild(new XMLElement('td', $valid_until));
 				}
@@ -157,10 +157,10 @@ Class fieldStatus extends Field
 		if($this->get('valid_until') == 'yes')
 		{
 			$row = new XMLElement('tr', null, array('class'=>'valid'));
-			$row->appendChild(new XMLElement('td', __('Valid until:')));
+			$row->appendChild(new XMLElement('td', __('Valid Until')));
 			$td = new XMLElement('td', null, array('colspan'=>2));
 			$fieldname = 'fields['.$this->get('element_name').'-until]';
-			$td->appendChild(Widget::Input($fieldname, __('YYYY-MM-DD')));
+			$td->appendChild(Widget::Input($fieldname, DateTimeObj::get('d F Y', strtotime('next year'))));
 			$row->appendChild($td);
 			$table->appendChild($row);
 		}
@@ -199,7 +199,7 @@ Class fieldStatus extends Field
 			
 			if($dateUntil != __('YYYY-MM-DD') && !empty($dateUntil))
 			{
-				$dateUntil = '\''.$dateUntil.'\'';
+				$dateUntil = '\''.DateTimeObj::get('Y-m-d', strtotime($dateUntil)).'\'';
 			} else {
 				$dateUntil = 'NULL';
 			}
