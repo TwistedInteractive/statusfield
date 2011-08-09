@@ -12,7 +12,7 @@ Class extension_statusfield extends Extension
 				'name' => 'Giel Berkers',
 				'website' => 'http://www.gielberkers.com',
 				'email' => 'info@gielberkers.com'),
-			'description' => 'Store the status and hold a history of previous statusses.'
+			'description' => 'Store the status and hold a history of previous statuses.'
 		);
 	}
 	
@@ -30,14 +30,18 @@ Class extension_statusfield extends Extension
 	
 	public function initialiseHead($context)
 	{
-		Administration::instance()->Page->addScriptToHead(URL . '/extensions/statusfield/assets/statusfield.js', 101, false);
-		Administration::instance()->Page->addStylesheetToHead(URL . '/extensions/statusfield/assets/statusfield.css', 'screen', 101, false);
+		$page = $context['parent']->Page;
+		if ($page instanceof ContentPublish && in_array($page->_context['page'], array('new', 'edit')))
+		{
+			Administration::instance()->Page->addScriptToHead(URL . '/extensions/statusfield/assets/statusfield.publish.js', 101, false);
+			Administration::instance()->Page->addStylesheetToHead(URL . '/extensions/statusfield/assets/statusfield.publish.css', 'screen', 101, false);
+		}
 	}
 	
 	public function uninstall()
 	{
 		Symphony::Database()->query("DROP TABLE `tbl_fields_status`");
-		Symphony::Database()->query("DROP TABLE `tbl_fields_status_statusses`");
+		Symphony::Database()->query("DROP TABLE `tbl_fields_status_statuses`");
 	}
 
 	public function install()
@@ -50,7 +54,7 @@ Class extension_statusfield extends Extension
 			PRIMARY KEY  (`id`),
 			UNIQUE KEY `field_id` (`field_id`)
 		)");
-		Symphony::Database()->query("CREATE TABLE `tbl_fields_status_statusses` (
+		Symphony::Database()->query("CREATE TABLE `tbl_fields_status_statuses` (
 			`id` int(11) unsigned NOT NULL auto_increment,
 			`field_id` int(11) unsigned NOT NULL,
 			`entry_id` int(11) unsigned NOT NULL,
@@ -59,5 +63,19 @@ Class extension_statusfield extends Extension
 			`valid_until` DATE,
 			PRIMARY KEY  (`id`)
 		)");
+	}
+	
+	public function update()
+	{
+		try{
+			if(version_compare($previousVersion, '0.2', '<')){
+				Symphony::Database()->query(
+					"RENAME `tbl_fields_status_statusses` TO `tbl_fields_status_statuses`"
+				);
+			}
+		}
+		catch(Exception $e){
+			
+		}
 	}
 }

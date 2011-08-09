@@ -1,6 +1,0 @@
-div.field-status label { margin-bottom: 2px; }
-table.status { border-collapse: collapse; width: 100%; margin-bottom: 1.75em; border: 1px solid #ddddcc; }
-table.status th { text-align: left; padding-right: 3em; }
-table.status th.date { width: 90px; }
-table.status th, table.status td { padding: 3px; border-bottom: 1px solid #ddddcc; }
-table.status tr.footer td { border: none; background: #bba; }

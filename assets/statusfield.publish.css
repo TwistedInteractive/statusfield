@@ -1,0 +1,5 @@
+div.field-status label { margin-bottom: 0; }
+table.status th, table.status td { padding: 5px 8px; }
+table.status { margin-left: -8px; }
+table.status input { width: 98%; margin: 0; display: block; }
+table.status tr.valid td { vertical-align: middle; }

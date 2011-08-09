@@ -11,7 +11,7 @@ Class fieldStatus extends Field
 	}
 	
 	function canToggle(){
-		return false;
+		return true;
 	}
 	
 	function allowDatasourceOutputGrouping(){
@@ -46,7 +46,7 @@ Class fieldStatus extends Field
 		$options = array();
 		$fieldname = 'fields'.$fieldnamePrefix.'['.$this->get('element_name').']'.$fieldnamePostfix;
 		
-		$label = Widget::Label(__('Statusses'));
+		$label = Widget::Label(__('Statuses'));
 		$input = Widget::Input('fields['.$this->get('sortorder').'][options]', General::sanitize($this->get('options')));
 		$label->appendChild($input);
 		$wrapper->appendChild($label);
@@ -84,7 +84,7 @@ Class fieldStatus extends Field
 	
 	
 	// Show the publish panel:
-	function displayPublishPanel(&$wrapper, $data=NULL, $flagWithError=NULL, $fieldnamePrefix=NULL, $fieldnamePostfix=NULL){
+	function displayPublishPanel(&$wrapper, $data=NULL, $flagWithError=NULL, $fieldnamePrefix=NULL, $fieldnamePostfix=NULL, $entry_id=NULL){
 		// Get the toggle states:
 		$states = $this->getToggleStates();
 		natsort($states);
@@ -106,7 +106,7 @@ Class fieldStatus extends Field
 		$row->appendChild(new XMLElement('th', __('Status')));
 		if($this->get('valid_until') == 'yes')
 		{
-			$row->appendChild(new XMLElement('th', __('Valid until'), array('class'=>'date')));
+			$row->appendChild(new XMLElement('th', __('Valid Until'), array('class'=>'date')));
 		}
 		
 		$table->appendChild($row);
@@ -114,18 +114,13 @@ Class fieldStatus extends Field
 		// Show the different states:
 		$fieldId = $this->get('id');
 		
-		// Get the Entry ID (code 'borrowed' from Nils Hörrmann's Subsection Manager):
-		$currentPageURL = Administration::instance()->getCurrentPageURL();
-		preg_match_all('/\d+/', $currentPageURL, $entry_id, PREG_PATTERN_ORDER);
-		$entry_id = $entry_id[0][count($entry_id[0])-1];
-		
-		if($entry_id != false)
+		if($entry_id != NULL)
 		{
-			$results = Symphony::Database()->fetch('SELECT `date`, `status`, `valid_until` FROM `tbl_fields_status_statusses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entry_id.' ORDER BY `date`, `id`;');
+			$results = Symphony::Database()->fetch('SELECT `date`, `status`, `valid_until` FROM `tbl_fields_status_statuses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entry_id.' ORDER BY `date`, `id`;');
 			foreach($results as $result)
 			{
 				$row = new XMLElement('tr');
-				$row->appendChild(new XMLElement('td', $this->invertDate($result['date'])));
+				$row->appendChild(new XMLElement('td', DateTimeObj::get('d F Y', $result['date'])));
 				$row->appendChild(new XMLElement('td', $result['status']));
 				if($this->get('valid_until') == 'yes')
 				{
@@ -133,7 +128,7 @@ Class fieldStatus extends Field
 					{
 						$valid_until = '-';
 					} else {
-						$valid_until = $this->invertDate($result['valid_until']);
+						$valid_until = DateTimeObj::get('d F Y', $result['valid_until']);
 					}
 					$row->appendChild(new XMLElement('td', $valid_until));
 				}
@@ -143,7 +138,7 @@ Class fieldStatus extends Field
 		
 		// Show the footer (option to set new status):
 		$row = new XMLElement('tr', null, array('class'=>'footer'));
-		$row->appendChild(new XMLElement('td', __('Update:')));
+		$row->appendChild(new XMLElement('td', DateTimeObj::get('d F Y'), array('class' => 'inactive')));
 		$td = new XMLElement('td', null);
 		if($this->get('valid_until') == 'yes')
 		{
@@ -157,10 +152,10 @@ Class fieldStatus extends Field
 		if($this->get('valid_until') == 'yes')
 		{
 			$row = new XMLElement('tr', null, array('class'=>'valid'));
-			$row->appendChild(new XMLElement('td', __('Valid until:')));
+			$row->appendChild(new XMLElement('td', __('Valid Until')));
 			$td = new XMLElement('td', null, array('colspan'=>2));
 			$fieldname = 'fields['.$this->get('element_name').'-until]';
-			$td->appendChild(Widget::Input($fieldname, __('DD-MM-YYYY')));
+			$td->appendChild(Widget::Input($fieldname, DateTimeObj::get('d F Y', strtotime('next year'))));
 			$row->appendChild($td);
 			$table->appendChild($row);
 		}
@@ -197,16 +192,16 @@ Class fieldStatus extends Field
 			// $statusStr = $_POST['fields'][$this->get('element_name')];
 			$statusStr = $data;
 			
-			if($dateUntil != __('DD-MM-YYYY') && !empty($dateUntil))
+			if($dateUntil != __('YYYY-MM-DD') && !empty($dateUntil))
 			{
-				$dateUntil = '\''.$this->invertDate($dateUntil).'\'';
+				$dateUntil = '\''.DateTimeObj::get('Y-m-d', strtotime($dateUntil)).'\'';
 			} else {
 				$dateUntil = 'NULL';
 			}
 			// Don't insert if there is no entry_id:
 			if($entry_id != null)
 			{
-				Symphony::Database()->query('INSERT INTO `tbl_fields_status_statusses`
+				Symphony::Database()->query('INSERT INTO `tbl_fields_status_statuses`
 					(`field_id`, `entry_id`, `date`, `status`, `valid_until`) VALUES
 					('.$fieldId.', '.$entryId.', \''.$dateNow.'\', \''.$statusStr.'\', '.$dateUntil.');');
 			}
@@ -220,7 +215,7 @@ Class fieldStatus extends Field
 			{
 				// There can only be a value returned if there is an entry_id:
 				return array(
-					'value' => Symphony::Database()->fetchVar('status', 0, 'SELECT `status` FROM `tbl_fields_status_statusses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date` DESC, `id` DESC;')
+					'value' => Symphony::Database()->fetchVar('status', 0, 'SELECT `status` FROM `tbl_fields_status_statuses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date` DESC, `id` DESC;')
 				);
 			} else {
 				// Is this the right way to do this?
@@ -238,7 +233,7 @@ Class fieldStatus extends Field
 		$attributes = $wrapper->getAttributes();
 		$entryId = $attributes['id'];
 		$fieldId = $this->get('id');
-		$results = Symphony::Database()->fetch('SELECT `date`, `status`, `valid_until` FROM `tbl_fields_status_statusses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date`, `id`;');
+		$results = Symphony::Database()->fetch('SELECT `date`, `status`, `valid_until` FROM `tbl_fields_status_statuses` WHERE `field_id` = '.$fieldId.' AND `entry_id` = '.$entryId.' ORDER BY `date`, `id`;');
 		foreach($results as $result)
 		{
 			$status = new XMLElement('status', General::sanitize($result['status']), array('date'=>$result['date']));
@@ -251,11 +246,11 @@ Class fieldStatus extends Field
 	}
 	
 	
-	// Delete the entry and the associated statusses:
+	// Delete the entry and the associated statuses:
 	public function entryDataCleanup($entry_id, $data=NULL)
 	{
 		$this->Database->delete('tbl_entries_data_' . $this->get('id'), " `entry_id` = '$entry_id' ");
-		$this->Database->delete('tbl_fields_status_statusses', ' `entry_id` = '.$entry_id);
+		$this->Database->delete('tbl_fields_status_statuses', ' `entry_id` = '.$entry_id);
 		return true;
 	}
 	
@@ -294,29 +289,11 @@ Class fieldStatus extends Field
 	
 	
 	// Toggle the field
-	function toggleFieldData($data, $newState)
+	function toggleFieldData($data, $newState, $entry_id=NULL)
 	{
-		// $data['value'] = $newState;
-		// $data['handle'] = Lang::createHandle($newState);
-		// return $data;
-		
-		// Get the entry-id:
-		// print_r(Symphony::Database()->fetch());
-		
-		
-		die();
+		$status = ''; // dummy variable
+		$data = $this->processRawFieldData($newState, $status, FALSE, $entry_id);
+		return $data;
 	}
 		
-		
-	/**
-	 * Invert a date for database storage (convert 2010-10-21 to 21-10-2010 and vice versa)
-	 * @param $str	string	The date
-	 * @return		string	The inverted date
-	 */
-	private function invertDate($str)
-	{
-		$a = explode('-', $str);
-		return $a[2].'-'.$a[1].'-'.$a[0];
-	}
-	
 }
