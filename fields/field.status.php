@@ -42,10 +42,9 @@ Class fieldStatus extends Field
 	// Show the settings panel (at the sections screen):
 	public function displaySettingsPanel(&$wrapper, $errors = null) {
 		parent::displaySettingsPanel($wrapper, $errors);
-		
-		$options = array();
-		$fieldname = 'fields'.'['.$this->get('element_name').']';
-		
+
+        $wrapper->appendChild($this->buildPublishLabel());
+
 		$label = Widget::Label(__('Statuses'));
 		$input = Widget::Input('fields['.$this->get('sortorder').'][options]', General::sanitize($this->get('options')));
 		$label->appendChild($input);
