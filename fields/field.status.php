@@ -2,8 +2,8 @@
 
 Class fieldStatus extends Field
 {
-	function __construct(&$parent){
-		parent::__construct($parent);
+	function __construct(){
+		parent::__construct();
 		$this->_name = __('Status');
 		
 		// Set default
@@ -44,7 +44,7 @@ Class fieldStatus extends Field
 		parent::displaySettingsPanel($wrapper, $errors);
 		
 		$options = array();
-		$fieldname = 'fields'.$fieldnamePrefix.'['.$this->get('element_name').']'.$fieldnamePostfix;
+		$fieldname = 'fields'.'['.$this->get('element_name').']';
 		
 		$label = Widget::Label(__('Statuses'));
 		$input = Widget::Input('fields['.$this->get('sortorder').'][options]', General::sanitize($this->get('options')));
@@ -76,8 +76,8 @@ Class fieldStatus extends Field
 		if($this->get('options') != '') $fields['options'] = $this->get('options');
 		if($this->get('valid_until') != '') $fields['valid_until'] = $this->get('valid_until');
 
-		$this->Database->query("DELETE FROM `tbl_fields_".$this->handle()."` WHERE `field_id` = '$id' LIMIT 1");
-		if(!$this->Database->insert($fields, 'tbl_fields_' . $this->handle())) return false;
+		Symphony::Database()->query("DELETE FROM `tbl_fields_".$this->handle()."` WHERE `field_id` = '$id' LIMIT 1");
+		if(!Symphony::Database()->insert($fields, 'tbl_fields_' . $this->handle())) return false;
 		
 		return true;
 	}
@@ -172,12 +172,12 @@ Class fieldStatus extends Field
 	
 	
 	// Store the new status:
-	public function processRawFieldData($data, &$status, $simulate=false, $entry_id=null) {	
+	public function processRawFieldData($data, &$status, $message=null, $simulate=false, $entry_id=null) {
 		// Set the status:			
 		$status  = self::__OK__;
 		$fieldId = $this->get('id');
 		$entryId = $entry_id;
-		
+
 		if($data != '0')
 		{
 			// Store new status:
@@ -249,8 +249,8 @@ Class fieldStatus extends Field
 	// Delete the entry and the associated statuses:
 	public function entryDataCleanup($entry_id, $data=NULL)
 	{
-		$this->Database->delete('tbl_entries_data_' . $this->get('id'), " `entry_id` = '$entry_id' ");
-		$this->Database->delete('tbl_fields_status_statuses', ' `entry_id` = '.$entry_id);
+        Symphony::Database()->delete('tbl_entries_data_' . $this->get('id'), " `entry_id` = '$entry_id' ");
+        Symphony::Database()->delete('tbl_fields_status_statuses', ' `entry_id` = '.$entry_id);
 		return true;
 	}
 	
@@ -263,7 +263,6 @@ Class fieldStatus extends Field
 		$states = array();
 		
 		foreach ($values as $value) {
-			$value = $value;
 			$states[$value] = $value;
 		}
 		

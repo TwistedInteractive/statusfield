@@ -6,8 +6,8 @@ Class extension_statusfield extends Extension
 	{
 		return array(
 			'name' => 'Field: Status',
-			'version' => '0.1',
-			'release-date' => '2010-10-20',
+			'version' => '0.2',
+			'release-date' => '2011-12-15',
 			'author' => array(
 				'name' => 'Giel Berkers',
 				'website' => 'http://www.gielberkers.com',
@@ -30,7 +30,7 @@ Class extension_statusfield extends Extension
 	
 	public function initialiseHead($context)
 	{
-		$page = $context['parent']->Page;
+		$page = Administration::instance()->Page;
 		if ($page instanceof ContentPublish && in_array($page->_context['page'], array('new', 'edit')))
 		{
 			Administration::instance()->Page->addScriptToHead(URL . '/extensions/statusfield/assets/statusfield.publish.js', 101, false);
@@ -65,7 +65,7 @@ Class extension_statusfield extends Extension
 		)");
 	}
 	
-	public function update()
+	public function update($previousVersion)
 	{
 		try{
 			if(version_compare($previousVersion, '0.2', '<')){

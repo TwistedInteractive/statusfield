@@ -1,7 +1,7 @@
 # Status Field
 
-* Version: 0.1
-* Release date: 2010-10-21
+* Version: 0.2
+* Release date: 2011-12-15
 * Author: Giel Berkers
 * Website: http://www.gielberkers.com
 * E-mail: info@gielberkers.com
