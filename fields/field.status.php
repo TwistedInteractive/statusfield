@@ -96,7 +96,7 @@ Class fieldStatus extends Field
 			$options[] = array(General::sanitize($v), false, $v);
 		}
 		
-		$label = Widget::Label($this->label());
+		$label = Widget::Label($this->get('label'));
 		$table = new XMLElement('table', null, array('class'=>'status'));
 		
 		// Show the headers:
