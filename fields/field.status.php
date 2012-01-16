@@ -43,7 +43,7 @@ Class fieldStatus extends Field
 	public function displaySettingsPanel(&$wrapper, $errors = null) {
 		parent::displaySettingsPanel($wrapper, $errors);
 
-        $wrapper->appendChild($this->buildPublishLabel());
+        // $wrapper->appendChild($this->buildPublishLabel());
 
 		$label = Widget::Label(__('Statuses'));
 		$input = Widget::Input('fields['.$this->get('sortorder').'][options]', General::sanitize($this->get('options')));
