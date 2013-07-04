@@ -9,9 +9,8 @@ Class extension_statusfield extends Extension
 			'version' => '0.2',
 			'release-date' => '2011-12-15',
 			'author' => array(
-				'name' => 'Giel Berkers',
-				'website' => 'http://www.gielberkers.com',
-				'email' => 'info@gielberkers.com'),
+				'name' => 'Twisted Interactive',
+				'website' => 'http://www.twisted.nl'),
 			'description' => 'Store the status and hold a history of previous statuses.'
 		);
 	}
